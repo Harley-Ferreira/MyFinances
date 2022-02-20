@@ -37,9 +37,9 @@ public class LancamentoServiceImp implements LancamentoService {
     @Override
     @Transactional
     public Lancamento atualizar(Lancamento lancamento) {
-        validar(lancamento);
         // Para atualizar precisa ter um id
         Objects.requireNonNull(lancamento.getId());
+        validar(lancamento);
         return repository.save(lancamento);
     }
 
