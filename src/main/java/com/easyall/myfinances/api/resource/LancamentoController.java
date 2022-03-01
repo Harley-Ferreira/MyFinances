@@ -53,6 +53,13 @@ public class LancamentoController {
         return ResponseEntity.ok(lancamentos);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity obterLancamento(@PathVariable("id") Long id) {
+        return lancamentoService.obterPorId(id)
+                .map(lancamento -> new ResponseEntity(converter(lancamento), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
+    }
+
     @PostMapping //Post e para criar um recurso no servidor que ainda não foi criado
     public ResponseEntity salvar(@RequestBody LancamentoDTO dto) {
         try {
@@ -107,6 +114,13 @@ public class LancamentoController {
                 new ResponseEntity("Lancamento não encontrado na base de Dados.", HttpStatus.BAD_REQUEST));
     }
 
+    private LancamentoDTO converter(Lancamento lancamento) {
+        return LancamentoDTO.builder().id(lancamento.getId())
+                .descricao(lancamento.getDescricao())
+                .ano(lancamento.getAno()).mes(lancamento.getMes())
+                .valor(lancamento.getValor()).tipo(lancamento.getTipo().name())
+                .status(lancamento.getStatus().name()).usuario(lancamento.getUsuario().getId()).build();
+    }
 
     private Lancamento converter(LancamentoDTO dto) {
         Lancamento lancamento = new Lancamento();
