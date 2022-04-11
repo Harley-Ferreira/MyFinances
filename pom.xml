@@ -13,9 +13,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>myfinances</name>
 	<description>Projeto gerenciador de finanças</description>
-<!--	<properties>-->
-<!--		<java.version>11</java.version>-->
-<!--	</properties>-->
+	<properties>
+		<java.version>11</java.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -30,6 +30,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 		<dependency>
@@ -50,6 +55,12 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 
 		<dependency>

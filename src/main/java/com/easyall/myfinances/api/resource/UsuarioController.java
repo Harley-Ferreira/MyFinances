@@ -1,10 +1,12 @@
 package com.easyall.myfinances.api.resource;
 
 
+import com.easyall.myfinances.api.dto.TokenTDO;
 import com.easyall.myfinances.api.dto.UsuarioDTO;
 import com.easyall.myfinances.exception.ErroAutenticacao;
 import com.easyall.myfinances.exception.RegraNegocioException;
 import com.easyall.myfinances.model.entity.Usuario;
+import com.easyall.myfinances.service.JwtService;
 import com.easyall.myfinances.service.LancamentoService;
 import com.easyall.myfinances.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +29,15 @@ public class UsuarioController {
     // Aqui não tem construtor porque usamos o @RequiredArgsConstructor e declaramos como final os services. (BEM MAIS PRATICO NÉ)
     private final UsuarioService usuarioService;
     private final LancamentoService lancamentoService;
+    private final JwtService jwtService;
 
     @PostMapping("/autenticar")
-    public ResponseEntity autenticar(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<?> autenticar(@RequestBody UsuarioDTO dto) {
        try {
            Usuario usuarioAutententicado = usuarioService.autenticar(dto.getEmail(), dto.getSenha());
-           return ResponseEntity.ok(usuarioAutententicado);
+           String token = jwtService.gerarToken(usuarioAutententicado);
+           TokenTDO tokenDTO = new TokenTDO(usuarioAutententicado.getNome(), token);
+           return ResponseEntity.ok(tokenDTO );
        } catch (ErroAutenticacao e) {
            return ResponseEntity.badRequest().body(e.getMessage());
        }

@@ -6,6 +6,7 @@ import com.easyall.myfinances.model.entity.Usuario;
 import com.easyall.myfinances.model.repository.UsuarioRepository;
 import com.easyall.myfinances.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +16,13 @@ import java.util.Optional;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private UsuarioRepository repository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioServiceImpl(UsuarioRepository repository) {
+    public UsuarioServiceImpl(UsuarioRepository repository, PasswordEncoder passwordEncoder) {
         super();
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -30,7 +33,9 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new ErroAutenticacao("Usuário não encontrado para o email informado");
         }
 
-        if (!usuario.get().getSenha().equals(senha)) {
+        boolean senhaIguais = passwordEncoder.matches(senha, usuario.get().getSenha());
+
+        if (!senhaIguais) {
             throw new ErroAutenticacao("Senha inválida");
         }
 
@@ -41,7 +46,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public Usuario salvarUsuario(Usuario usuario) {
         validarEmail(usuario.getEmail());
+        critografarSenha(usuario);
         return repository.save(usuario);
+    }
+
+    private void critografarSenha(Usuario usuario) {
+        String senha = usuario.getSenha();
+        String senhaCriptografada = passwordEncoder.encode(senha);
+        usuario.setSenha(senhaCriptografada);
     }
 
     @Override
